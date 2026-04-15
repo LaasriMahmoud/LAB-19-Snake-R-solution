@@ -57,7 +57,8 @@ Toujours dans le même package, la classe `BigBoss` est essentielle :
 - La fonction `stringFromJNI()` génère le flag et le logue via `Log.d()`.
 
 *(Capture d'écran : Analyse de la classe BigBoss)*
-![Analyse de la classe BigBoss](3.png)
+> [!NOTE]
+> *Pas de capture fournie pour la classe BigBoss.*
 
 *Remarque : Les contrôles d'environnement (vérification de `Build.TAGS`, recherche des binaires `su`, vérifications d'émulateur et de port Frida) bloquent l'exécution de l'application avant d'arriver à ce stade. Nous devons les neutraliser.*
 
@@ -104,6 +105,9 @@ adb install -r snake_patched.apk
 ```
 *Note : Il faut accorder la permission de lire le stockage à l'application une fois installée (`READ_EXTERNAL_STORAGE`).*
 
+*(Capture d'écran : Nouveaux fichiers APK générés)*
+![Fichiers APK](6.png)
+
 ---
 
 ## 💣 Étape 3 : Création de la payload YAML (CVE-2022-1471)
@@ -126,8 +130,8 @@ On conçoit le payload `Skull_Face.yml` qui utilise un "global tag" YAML. Ce tag
 adb push Skull_Face.yml /sdcard/Snake/Skull_Face.yml
 ```
 
-*(Capture d'écran : Mise en place du payload YAML)*
-![Aperçu du contenu YAML et push ADB](5.png)
+*(Capture d'écran : Aperçu du contenu YAML)*
+![Aperçu du contenu YAML](2.png)
 
 ---
 
@@ -139,11 +143,17 @@ On exécute l'Activity principale en n'oubliant pas de passer l'extra dont le pr
 adb shell am start -n com.pwnsec.snake/.MainActivity -e SNAKE BigBoss
 ```
 
+*(Capture d'écran : Logique de l'Intent passée via shell)*
+![Intent adb](4.png)
+
 Cette action :
 1. Valide la récupération de l'extra `SNAKE == BigBoss`.
 2. Ouvre et parse `/sdcard/Snake/Skull_Face.yml`.
 3. Lance SnakeYAML, qui appelle à cause du tag spécifique le constructeur de `BigBoss` avec la bonne valeur de l'argument.
 4. Déclenche la fonction native JNI depuis Java.
+
+*(Capture d'écran : Le jeu se fige ensuite sur une image)*
+![La vue de l'application](3.png)
 
 ---
 
@@ -156,7 +166,7 @@ adb logcat -d | grep -i "PWNSEC"
 ```
 
 *(Capture d'écran : Affichage du Flag dans le shell Logcat)*
-![Le flag intercepté dans le Logcat Android](6.png)
+![Le flag intercepté dans le Logcat Android](5.png)
 
 **Flag obtenu :**
 ```text
