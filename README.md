@@ -33,7 +33,7 @@ adb install snake.apk
 Lorsqu'on lance l'application, on s'aperçoit qu'elle se ferme **immédiatement**. La cause ? Des protections natives empêchent son exécution sur des appareils rootés, sur émulateur ou si Frida tourne en tâche de fond. **Un patching de l'application est donc incontournable.**
 
 *(Capture d'écran : Détection environnement / comportement)*
-![Détection de l'environnement](1.png)
+
 
 ---
 
@@ -48,7 +48,7 @@ Dans le package `com.pwnsec.snake`, on explore le point d'entrée, `MainActivity
 - Le fichier `Skull_Face.yml` est lu et désérialisé avec SnakeYAML.
 
 *(Capture d'écran : Logique de la classe MainActivity)*
-![Analyse du code source de MainActivity](2.png)
+![Analyse du code source de MainActivity](1.png)
 
 ### 2. Le Graal : `BigBoss`
 Toujours dans le même package, la classe `BigBoss` est essentielle :
@@ -89,7 +89,7 @@ On localise les méthodes de détection comme `isDeviceRooted` au sein de `MainA
 On remplace la logique originale pour forcer la méthode à renvoyer `0` (false), ce qui permet de duper l'application sur le fait que le téléphone est rooté ou émulé.
 
 *(Capture d'écran : Code Smali Patché)*
-![Patch des protections Smali](4.png)
+![Patch des protections Smali](6.png)
 
 ### 3. Recompilation et Signature
 ```bash
@@ -109,7 +109,7 @@ adb install -r snake_patched.apk
 ![Fichiers APK](6.png)
 
 ---
-
+![La vue de l'application](3.png)
 ## 💣 Étape 3 : Création de la payload YAML (CVE-2022-1471)
 
 La faille repose sur le parsing vulnérable de `SnakeYAML`.
